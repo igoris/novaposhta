@@ -147,8 +147,8 @@ class Carrier extends AbstractCarrier implements CarrierInterface
 
 
         /** WarehouseWarehouse  */
-        if (in_array(self::METHOD_WAREHOUSE, $allowed)) {
-
+        if (array_key_exists(self::METHOD_WAREHOUSE, $allowed)) {
+            
             $params = [
                 'modelName'        => 'InternetDocument',
                 'calledMethod'     => 'getDocumentPrice',
@@ -169,7 +169,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
             $methodWarehouse = $this->rateMethodFactory->create();
             $methodWarehouse->setCarrier($this->_code);
             $methodWarehouse->setCarrierTitle($carrierTitle);
-            $methodWarehouse->setMethod('novaposhta_to_warehouse');
+            $methodWarehouse->setMethod(self::METHOD_WAREHOUSE);
             $methodWarehouse->setMethodTitle($nameWW);
             $methodWarehouse->setPrice($price);
 
@@ -178,7 +178,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
 
 
         /** WarehouseDoors  */
-        if (in_array(self::METHOD_DOOR, $allowed)) {
+        if (array_key_exists(self::METHOD_DOOR, $allowed)) {
 
             $params = [
                 'modelName'        => 'InternetDocument',
@@ -198,7 +198,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
             $methodDoor = $this->rateMethodFactory->create();
             $methodDoor->setCarrier($this->_code);
             $methodDoor->setCarrierTitle($carrierTitle);
-            $methodDoor->setMethod('novaposhta_to_door');
+            $methodDoor->setMethod(self::METHOD_DOOR);
             $methodDoor->setMethodTitle($nameWD);
             $methodDoor->setPrice($price);
 
@@ -244,14 +244,15 @@ class Carrier extends AbstractCarrier implements CarrierInterface
      */
     public function getAllowedMethods()
     {
-        $allowed = explode(',', $this->getConfigData('allowed_methods'));
-        $arr = [];
-        /**
-          foreach ($allowed as $_code)
-          {
-          $arr[$_code] = $this->getCode('method', $_code);
-          } */
-        return $allowed;
+        $allowed_codes = explode(',', $this->getConfigData('allowed_methods'));
+        $allowed_methods = [];
+        
+        foreach ($allowed_codes as $_code)
+        {
+            $allowed_methods[$_code] = $this->getCode('method', $_code);
+        }
+
+        return $allowed_methods;
     }
 
     /**
